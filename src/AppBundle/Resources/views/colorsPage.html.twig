@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+{% block javascripts %}
+<script language="JavaScript">
+    function toggle(source) {
+        checkboxes = document.getElementsByClassName('chb');
+        for(var i = 0, n = checkboxes.length; i < n; i++) {
+            checkboxes[i].checked = source.checked;
+        }
+    }
+</script>
+{% endblock %}
+
+
+{% block body %}
+    <div style="width: 100%; height: 39px; background-color: white">
+        <button class="small_button_class" style="float: right; margin-right: 10px" onclick="window.location.href='{{ path("logout") }}'">Logout </button>
+        <label style="float: left; margin-left: 10px; margin-top: 9px"><B>Bine ai venit  {{ userFullName }}</B></label>
+    </div>
+
+    <center>
+        <p class="title_class"> Smart Fashion</p>
+        <p class="subtitle_class"> <h2>Ai ales {{ gender }} {{ age }} din categoria {{ category }}</h2></p>
+
+        <form action="{{ path('resultsPage', {'age': age, 'gender': gender, 'category': category}) }}" method="post">
+            <div style="display: inline-block">
+                <h2>Culori:</h2>
+
+                <ul style="margin-left: 43%">
+                    <li>
+                        <label for="check_all" style="margin-left: -80%">Toate </label>
+                        <input type="checkbox" id="check_all" onClick="toggle(this)"/>
+                        <div class="check2"></div>
+                    </li>
+                </ul>
+
+                    <ul style="display: inline-block">
+                        {% for primaryColorLine in primaryColors %}
+                            <div style="display: inline-block">
+                                <li>
+                                    <input type="checkbox" id="{{ primaryColorLine }}" class="chb" name="colors[]" value="{{ primaryColorLine }}">
+                                    <label for="{{ primaryColorLine }}">{{ primaryColorLine }}</label>
+                                    <div class="check2"></div>
+                                </li>
+                            </div>
+                        {% endfor %}
+                    </ul>
+
+                    <hr>
+                    <ul style="display: inline-block">
+                        {% for colorLine in colors %}
+                            <div style="display: inline-block">
+                                <li>
+                                    <input type="checkbox" id="{{ colorLine['color'] }}" class="chb" name="colors[]" value="{{ colorLine['color'] }}">
+                                    <label for="{{ colorLine['color'] }}">{{ colorLine['color'] }}</label>
+                                    <div class="check2"></div>
+                                </li>
+                            </div>
+                    {% endfor %}
+                </ul>
+            </div>
+            <br>
+            <br>
+            <button type="submit" class="button_class">Vezi rezultate</button>
+        </form>
+        <br>
+        <button id="back" class="button_class" onclick="window.location.href='{{ path("categoryPage", {'age': age, 'gender': gender}) }}'">Pagina anterioara</button>
+
+    </center>
+
+{% endblock %}

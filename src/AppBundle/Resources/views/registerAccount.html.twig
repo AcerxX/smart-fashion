@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <script>
+        var password = document.getElementById("password")
+                , confirm_password = document.getElementById("confirm_password");
+
+        function validatePassword(){
+            if(password.value != confirm_password.value) {
+                confirm_password.setCustomValidity("Passwords Don't Match");
+            } else {
+                confirm_password.setCustomValidity('');
+            }
+        }
+
+        password.onchange = validatePassword;
+        confirm_password.onkeyup = validatePassword;
+    </script>
+    <center>
+        <br>
+        <p class="title_class"> Smart Fashion</p>
+        <form action="{{ path("register-account") }}" method="post">
+            <br>
+            <input class="login_class" type="text" name="last_name" placeholder="Nume" required>
+            <br>
+            <input class="login_class" type="text" name="first_name" placeholder="Prenume" required>
+            <br>
+            <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+            <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+            <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+            <link rel="stylesheet" href="/resources/demos/style.css">
+            <script>
+                $(function() {
+                    $( "#datepicker" ).datepicker();
+                });
+            </script>
+            <input id="datepicker" class="login_class" type="text" name="birth_date" placeholder="Data nasterii" required>
+            <br>
+            <select name="gender" class="login_class">
+                <option id="0" value="0">Barbat</option>
+                <option id="1" value="1">Femeie</option>
+            </select>
+            <br>
+            <input class="login_class" type="text" name="email" placeholder="Email" required>
+            <br>
+            <input class="login_class" type="text" name="username" placeholder="Username" required>
+            <br>
+            <input id="password" class="login_class" type="password" name="password" placeholder="Parola" required>
+            <br>
+            <input id="confirm_password" class="login_class" type="password" name="password_confirmation" placeholder="Confirma parola" required>
+            <br>
+            <font color="red">{{ errorMsg }}</font>
+            <br>
+            <button class="button_class" type="submit" placeholder="Register">Inregistrare
+            </button>
+        </form>
+    </center>
+{% endblock %}

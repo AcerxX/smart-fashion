@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <style>
+        tr{border-top:thin solid}
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+    <script src="{{ asset('bundles/app/js/resultsPage.js') }}"></script>
+{% endblock javascripts %}
+
+{% block body %}
+
+    <div class="body" id="up_div">
+
+        <div style="width: 100%; height: 39px; background-color: white">
+            <button class="small_button_class" style="float: right; margin-right: 10px" onclick="window.location.href='{{ path("logout") }}'">Logout </button>
+            <label style="float: left; margin-left: 10px; margin-top: 9px"><B>Bine ai venit  {{ userFullName }}</B></label>
+        </div>
+
+        <center>
+            <p class="title_class"> Smart Fashion</p>
+            <p class="subtitle_class"> Ai ales {{ gender }}, {{ age }} din categoria {{ category }} </p><br>
+            <form style="display: inline" action="{{ path('resultsPage', {'age': age, 'gender': gender, 'category': category, 'colors': colors, 'maxPrice': maxPrice}) }}" method="post">
+                <table>
+                    <tr>
+                        <th style="padding: 10px">
+                            Sortare dupa:&nbsp&nbsp
+                        </th>
+                        <th style="padding: 10px">
+                            Din magazinul:&nbsp&nbsp
+                        </th>
+                        <th style="padding: 10px">
+                            Cu pretul:&nbsp&nbsp
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select id="sort" name="sort" style="width: 90%">
+                                <option id="0" {% if selectedSortId == 0 %} selected {% endif %} value="0">Nume asc.</option>
+                                <option id="1" {% if selectedSortId == 1 %} selected {% endif %} value="1">Pret asc.</option>
+                                <option id="2" {% if selectedSortId == 2 %} selected {% endif %} value="2">Pret desc.</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select id="store" name="store" style="width: 90%">
+                                <option id="0" {% if selectedStoreId == 0 %} selected {% endif %} value="0">Toate</option>
+                                <option id="1" {% if selectedStoreId == 1 %} selected {% endif %} value="1">H&M </option>
+                                <option id="2" {% if selectedStoreId == 2 %} selected {% endif %} value="2">Stradivarius</option>
+                                <option id="3" {% if selectedStoreId == 3 %} selected {% endif %} value="3">Bershka</option>
+                                <option id="4" {% if selectedStoreId == 4 %} selected {% endif %} value="4">Mango</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select id="price" name="price" style="width: 90%">
+                                <option id="0" {% if selectedPriceId == 0 %} selected {% endif %} value="0">Toate</option>
+
+                                {% if maxPrice > 100 %}
+                                    <option id="1" {% if selectedStoreId == 1 %} selected {% endif %} value="1">sub 100</option>
+                                {% endif %}
+
+                                {% if maxPrice > 200 %}
+                                    <option id="2" {% if selectedStoreId == 2 %} selected {% endif %} value="2">sub 200</option>
+                                {% endif %}
+
+                                <option id="3" {% if selectedStoreId == 2 %} selected {% endif %} value="3">sub {{ maxPrice }}</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <br>
+                <button type="submit" class="small_button_class" value="Filter">Filtreaza</button>
+            </form>
+
+            <br>
+            <br>
+            Am gasit {{ numberOfProductsFound }} produse.
+            <br>
+            <br>
+            <button id="back" class="button_class" onclick="window.location.href='{{ path("mainPage") }}'">Inapoi in meniul principal</button>
+            <br>
+            <br>
+            {% for result in results %}
+                <div style="display: inline-block; margin: 20px;">
+                    <a href="{{ result['productLink'] }}"> <img src="{{ result['picture'] }}" height="350" width="250"> </a>
+                    <br>
+                    <a href="{{ result['storeLink'] }}"><img src="{{ result['storeImage'] }}"></a><br><br>
+                    <B>
+                    {{ result['name'] }}
+                    <br>
+                    {{ result['price'] }}
+                    <br></B>
+                    {% if isNotGuest %}
+                        <button id="add_to_favorites_{{ result['productId'] }}" class="add_to_favorites_button" value="{{ result['productId'] }}"> Adauga la favorite </button>
+                    {% else %}
+                        <a href="{{ path('register-account') }}">Inregistreaza-te</a> pentru a adauga produsul la favorite!
+                    {% endif %}
+                    <br>
+
+                </div>
+            {% endfor %}
+        </center>
+
+    </div>
+
+    <a href="#" class="back-to-top">Back to Top</a>
+{% endblock %}

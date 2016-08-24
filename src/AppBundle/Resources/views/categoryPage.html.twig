@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div style="width: 100%; height: 39px; background-color: white">
+        <button class="small_button_class" style="float: right; margin-right: 10px" onclick="window.location.href='{{ path("logout") }}'">Logout </button>
+        <label style="float: left; margin-left: 10px; margin-top: 9px"><B>Bine ai venit  {{ userFullName }}</B></label>
+    </div>
+
+    <center>
+        <p class="title_class"> Smart Fashion</p>
+        <p class="subtitle_class"><h2> Ai ales: {{ gender }} {{ age }} </h2></p>
+
+        <form action="{{ path('colorsPage', {'age':age, 'gender':gender}) }}" method="post">
+            <div style="display: inline-block">
+                <h2>Categorie:</h2>
+
+                <ul style="display: inline-block">
+
+                {% for categoryLine in categories %}
+                    <div style="display: inline-block">
+                        <li>
+                            <input type="radio" id="{{ categoryLine['category'] }}" name="category" value="{{ categoryLine['category'] }}" required>
+                            <label for="{{ categoryLine['category'] }}">{{ categoryLine['category'] }}</label>
+                            <div class="check"></div>
+                        </li>
+                    </div>
+                {% endfor %}
+                </ul>
+            </div>
+            <br>
+            <br>
+            <br>
+            <button type="submit" class="button_class">Alege culorile</button>
+        </form>
+        <br>
+        <button id="back" class="button_class" onclick="window.location.href='{{ path("genderAgePage") }}'">Pagina anterioara</button>
+
+    </center>
+
+{% endblock %}
