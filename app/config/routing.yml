@@ -1,0 +1,4 @@
+app:
+    resource: "@AppBundle/Resources/config/routing.yml"
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"

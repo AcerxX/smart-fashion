@@ -1,0 +1,1 @@
+fos.Router.setData({"base_url":"","routes":{"addFavoriteProduct":{"tokens":[["text","\/add-to-favorites"]],"defaults":[],"requirements":[],"hosttokens":[]}},"prefix":"","host":"localhost","scheme":"http"});

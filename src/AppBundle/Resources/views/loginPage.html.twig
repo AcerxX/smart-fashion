@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <center>
+        <br>
+        <p class="title_class"> Smart Fashion</p>
+        <form action="{{ path("login", {'guest': false}) }}">
+            <br>
+            <input class="login_class" type="text" name="username" placeholder="Username">
+            <br>
+            <input class="login_class" type="password" name="password" placeholder="Parola">
+            <br>
+            <font color="red">{{ errorMsg }}</font>
+            <br>
+            <button class="button_class" type="submit" value="Sign in">Sign in
+            </button>
+        </form>
+        <br>
+        <button class="button_class" type="submit" onclick="window.location.href='{{ path("login", {'guest': true}) }}'">Continue as a guest
+        </button>
+        <br><br>
+
+        <a href="{{ path("register-account") }}">Daca doriti sa va creati un cont dati click aici</a>
+
+
+    </center>
+{% endblock %}

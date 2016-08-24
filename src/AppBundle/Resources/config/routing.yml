@@ -1,0 +1,41 @@
+app_login:
+    resource: "@AppBundle/Controller/"
+    type:     annotation
+test:
+    path:  /test
+    defaults: { _controller: AppBundle:Default:test }
+testTwo:
+    path:  /test-two
+    defaults: { _controller: AppBundle:Default:testTwo }
+register-account:
+    path: /register
+    defaults: { _controller: AppBundle:Default:registerAccount }
+login:
+    path: /login
+    defaults: { _controller: AppBundle:Default:loginCheck }
+mainPage:
+    path: /index
+    defaults: { _controller: AppBundle:Main:mainPage }
+genderAgePage:
+    path: /gender-age
+    defaults: { _controller: AppBundle:Main:genderAgePage }
+categoryPage:
+    path: /category
+    defaults: { _controller: AppBundle:Main:categoryPage }
+colorsPage:
+    path: /colors
+    defaults: { _controller: AppBundle:Main:colorsPage }
+resultsPage:
+    path: /results
+    defaults: { _controller: AppBundle:Main:resultsPage }
+favoriteProducts:
+    path: /favorites
+    defaults: { _controller: AppBundle:Main:favoriteProducts }
+addFavoriteProduct:
+    path: /add-to-favorites
+    defaults: { _controller: AppBundle:Main:addToFavorites}
+    options:
+        expose: true
+removeFromFavorites:
+    path: /remove-from-favorites
+    defaults: { _controller: AppBundle:Main:removeFromFavorites }

@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div style="width: 100%; height: 39px; background-color: white">
+        <button class="small_button_class" style="float: right; margin-right: 10px" onclick="window.location.href='{{ path("logout") }}'">Logout </button>
+        <label style="float: left; margin-left: 10px; margin-top: 9px"><B>Bine ai venit  {{ userFullName }}</B></label>
+    </div>
+
+    <center>
+        <p class="title_class"> Smart Fashion</p>
+        <p class="subtitle_class"><h2> Caut haine pentru... </h2></p>
+
+
+
+        <form action="{{ path('categoryPage') }}" method="post">
+            <div style="display: inline-block">
+                <div class="container">
+                    <br>
+                    <br>
+                    <br>
+                    <h2>Sex:</h2>
+
+                    <ul>
+                        <li>
+                            <input type="radio" id="f-option" name="gender" value="femeie" required>
+                            <label for="f-option">Femeie</label>
+
+                            <div class="check"><div class="inside"></div></div>
+                        </li>
+                        <li>
+                            <input type="radio" id="b-option" name="gender" value="barbat">
+                            <label for="b-option">Barbat</label>
+
+                            <div class="check"></div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="container">
+                    <h2>Varsta:</h2>
+
+                    <ul>
+                        <li>
+                            <input type="radio" id="a-option" name="age" value="adult" required>
+                            <label for="a-option">Adult</label>
+
+                            <div class="check"></div>
+                        </li>
+
+                        <li>
+                            <input type="radio" id="c-option" name="age" value="copil">
+                            <label for="c-option">Copil</label>
+
+                            <div class="check"><div class="inside"></div></div>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+            <br>
+
+            <button type="submit" class="button_class">Alege categoria </button>
+
+        </form>
+
+        <br>
+        <button id="back" class="button_class" onclick="window.location.href='{{ path("mainPage") }}'">Inapoi la meniul principal</button>
+    </center>
+
+{% endblock %}
