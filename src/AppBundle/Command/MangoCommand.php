@@ -286,11 +286,11 @@ class MangoCommand extends ContainerAwareCommand
         foreach ($json['groups']['0']['garments'] as $garment) {
             foreach ($garment['colors'] as $color) {
 
-                // SEARCH FI THERE IS ANY PRODUCT TO BE UPDATED
+                // SEARCH IF THERE IS ANY PRODUCT TO BE UPDATED
                 $oldProduct = $productsRepository->findOneBy(
                     [
                         'name' => $garment['shortDescription'],
-                        'picturePath' => $color['img1HQSrc'],
+                        'picturePath' => $color['images']['0']['img1Src'],
                         'store' => $em->getReference('AppBundle:Stores', $storeId)
                     ]
                 );
@@ -309,7 +309,7 @@ class MangoCommand extends ContainerAwareCommand
                 $product = new Products();
                 $product->setName($garment['shortDescription'])
                     ->setPrice($garment['price']['salePrice'])
-                    ->setPicturePath($color['img1HQSrc'])
+                    ->setPicturePath($color['images']['0']['img1Src'])
                     ->setProductLink($color['linkAnchor'])
                     ->setStore($em->getReference('AppBundle:Stores', $storeId));
 
