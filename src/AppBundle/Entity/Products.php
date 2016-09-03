@@ -59,6 +59,12 @@ class Products
     protected $price;
 
     /**
+     * @var boolean
+     * @ORM\Column(name="updated", type="boolean")
+     */
+    protected $updated;
+
+    /**
      * @return int
      */
     public function getId()
@@ -181,6 +187,24 @@ class Products
     public function setProductLink($productLink)
     {
         $this->productLink = $productLink;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isUpdated()
+    {
+        return $this->updated;
+    }
+
+    /**
+     * @param boolean $updated
+     * @return Products
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
         return $this;
     }
 }

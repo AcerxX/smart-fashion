@@ -8,11 +8,10 @@ use AppBundle\Entity\Products;
 use AppBundle\Repository\ProductsRepository;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DomCrawler\Crawler;
 
 class MangoCommand extends ContainerAwareCommand
 {
@@ -261,6 +260,38 @@ class MangoCommand extends ContainerAwareCommand
             'storeId' => 4
         ];
 
+
+        /** @var EntityManager $em */
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $sql = "SET FOREIGN_KEY_CHECKS=0;";
+        $stmt = $em->getConnection()->prepare($sql);
+        $stmt->execute();
+
+
+        // Mark all products as not updated
+        $output->writeln("Mark all mango products as not updated...");
+
+        $productsRepository = $em->getRepository('AppBundle:Products');
+        $products = $productsRepository->findBy(['store' => 4]);
+
+        $progressBar = new ProgressBar();
+        $progressBar->setBarCharacter('*');
+        $progressBar->setBarWidth(count($products));
+
+        $i = 1;
+        foreach ($products as $product) {
+            $progressBar->setProgress($i);
+
+            $product->setUpdated(false);
+
+            $em->persist($product);
+
+            $i += 1;
+        }
+        $em->flush();
+
+
+        // Updating products
         $i = 1;
         foreach ($links as $link) {
             $output->writeln("[" . $link['storeId'] . "] Backing up link " . $i . "/" . count($links) . "...");
@@ -274,6 +305,34 @@ class MangoCommand extends ContainerAwareCommand
             $output->writeln("Done.");
             $i = $i + 1;
         }
+
+
+        // Cleanup not updated products
+        $output->writeln("Cleaning up not updated products...");
+
+        $products = $productsRepository->findBy(['store' => 4, 'updated' => false]);
+
+        $progressBar = new ProgressBar();
+        $progressBar->setBarCharacter('*');
+        $progressBar->setBarWidth(count($products));
+
+        $i = 1;
+        foreach ($products as $product) {
+            $progressBar->setProgress($i);
+
+            $characteristic = $product->getCharacteristic();
+
+            $em->remove($characteristic);
+            $em->remove($product);
+
+            $i += 1;
+        }
+        $em->flush();
+
+
+        $sql = "SET FOREIGN_KEY_CHECKS=1;";
+        $stmt = $em->getConnection()->prepare($sql);
+        $stmt->execute();
     }
 
     public function getProducts($json, $category, $storeId, $gender, $age)
@@ -283,10 +342,12 @@ class MangoCommand extends ContainerAwareCommand
         /** @var ProductsRepository $productsRepository */
         $productsRepository = $em->getRepository('AppBundle:Products');
 
+        // Start updating products
         foreach ($json['groups']['0']['garments'] as $garment) {
             foreach ($garment['colors'] as $color) {
 
                 // SEARCH IF THERE IS ANY PRODUCT TO BE UPDATED
+                /** @var Products $oldProduct */
                 $oldProduct = $productsRepository->findOneBy(
                     [
                         'name' => $garment['shortDescription'],
@@ -297,7 +358,8 @@ class MangoCommand extends ContainerAwareCommand
 
                 if (!is_null($oldProduct)) {
                     if ($oldProduct->getPrice() != $garment['price']['salePrice']) {
-                        $oldProduct->setPrice($garment['price']['salePrice']);
+                        $oldProduct->setPrice($garment['price']['salePrice'])
+                            ->setUpdated(true);
                         $em->persist($oldProduct);
                         $em->flush($oldProduct);
                     }
@@ -321,7 +383,8 @@ class MangoCommand extends ContainerAwareCommand
                     ->setPattern('0');
                 $em->persist($characteristic);
 
-                $product->setCharacteristic($characteristic);
+                $product->setCharacteristic($characteristic)
+                    ->setUpdated(true);
 
                 $em->persist($product);
                 $em->flush();
