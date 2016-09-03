@@ -274,7 +274,7 @@ class MangoCommand extends ContainerAwareCommand
         $productsRepository = $em->getRepository('AppBundle:Products');
         $products = $productsRepository->findBy(['store' => 4]);
 
-        $progressBar = new ProgressBar();
+        $progressBar = new ProgressBar($output);
         $progressBar->setBarCharacter('*');
         $progressBar->setBarWidth(count($products));
 
@@ -312,7 +312,7 @@ class MangoCommand extends ContainerAwareCommand
 
         $products = $productsRepository->findBy(['store' => 4, 'updated' => false]);
 
-        $progressBar = new ProgressBar();
+        $progressBar = new ProgressBar($output);
         $progressBar->setBarCharacter('*');
         $progressBar->setBarWidth(count($products));
 
