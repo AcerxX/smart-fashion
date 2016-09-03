@@ -274,20 +274,15 @@ class MangoCommand extends ContainerAwareCommand
         $productsRepository = $em->getRepository('AppBundle:Products');
         $products = $productsRepository->findBy(['store' => 4]);
 
-        $progressBar = new ProgressBar($output);
-        $progressBar->setBarCharacter('*');
-        $progressBar->setBarWidth(count($products));
+        $progressBar = new ProgressBar($output, count($products));
 
-        $i = 1;
+        $progressBar->start();
         foreach ($products as $product) {
-            $progressBar->setProgress($i);
-
+            $progressBar->advance();
             $product->setUpdated(false);
-
             $em->persist($product);
-
-            $i += 1;
         }
+        $progressBar->finish();
         $em->flush();
 
 
@@ -312,22 +307,19 @@ class MangoCommand extends ContainerAwareCommand
 
         $products = $productsRepository->findBy(['store' => 4, 'updated' => false]);
 
-        $progressBar = new ProgressBar($output);
-        $progressBar->setBarCharacter('*');
-        $progressBar->setBarWidth(count($products));
+        $progressBar = new ProgressBar($output, count($products));
 
-        $i = 1;
+        $progressBar->start();
         foreach ($products as $product) {
-            $progressBar->setProgress($i);
+            $progressBar->advance();
 
             $characteristic = $product->getCharacteristic();
 
             $em->remove($characteristic);
             $em->remove($product);
-
-            $i += 1;
         }
         $em->flush();
+        $progressBar->finish();
 
 
         $sql = "SET FOREIGN_KEY_CHECKS=1;";
