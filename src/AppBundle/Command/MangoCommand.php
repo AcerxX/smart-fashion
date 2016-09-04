@@ -330,6 +330,7 @@ class MangoCommand extends ContainerAwareCommand
         foreach ($products as $product) {
             $progressBar->advance();
 
+            $em->merge($product);
             $em->remove($product);
         }
         $em->flush();
