@@ -7,6 +7,7 @@ use AppBundle\Entity\Characteristics;
 use AppBundle\Entity\Products;
 use AppBundle\Repository\ProductsRepository;
 use Doctrine\ORM\EntityManager;
+use Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -34,6 +35,9 @@ class MangoCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        /** @var Logger $logger */
+        $logger = $this->getContainer()->get('logger');
+
         $links[] = [
             'link' => "http://shop.mango.com/services/productlist/products/RO/she/sections_she_sibe_rb_promo.prendas/?idSubSection=vestidosprendas&menu=familia;32&salesPeriod=true",
             'category' => "Rochii",
@@ -275,6 +279,7 @@ class MangoCommand extends ContainerAwareCommand
         $products = $productsRepository->findBy(['store' => 4]);
 
         $progressBar = new ProgressBar($output, count($products));
+        $progressBar->setMessage("Marking all Mango products as not updated");
 
         $progressBar->start();
         foreach ($products as $product) {
@@ -296,7 +301,13 @@ class MangoCommand extends ContainerAwareCommand
             $json = curl_exec($ch);
 
             $json = json_decode($json, true);
-            $this->getProducts($json, $link['category'], $link['storeId'], $link['gender'], $link['age']);
+            try {
+                $this->getProducts($json, $link['category'], $link['storeId'], $link['gender'], $link['age']);
+            } catch (\Exception $e) {
+                $output->writeln("FAILED");
+                $logger->addCritical($e->getMessage());
+            }
+
             $output->writeln("Done.");
             $i = $i + 1;
         }
@@ -308,6 +319,7 @@ class MangoCommand extends ContainerAwareCommand
         $products = $productsRepository->findBy(['store' => 4, 'updated' => false]);
 
         $progressBar = new ProgressBar($output, count($products));
+        $progressBar->setMessage("Cleaning up not updated products...");
 
         $progressBar->start();
         foreach ($products as $product) {
