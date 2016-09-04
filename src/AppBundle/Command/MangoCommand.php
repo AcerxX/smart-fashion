@@ -333,7 +333,9 @@ class MangoCommand extends ContainerAwareCommand
                 $em->remove($characteristic);
             }
 
-            $em->remove($product);
+            if (!is_null($product)) {
+                $em->remove($product);
+            }
         }
         $em->flush();
         $progressBar->finish();
