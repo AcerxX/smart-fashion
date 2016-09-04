@@ -317,6 +317,7 @@ class MangoCommand extends ContainerAwareCommand
 
         // Cleanup not updated products
         $output->writeln("Cleaning up not updated products...");
+        $em = $this->getContainer()->get('doctrine')->resetManager();
 
         $products = $productsRepository->findBy(['store' => 4, 'updated' => false]);
 
@@ -326,7 +327,7 @@ class MangoCommand extends ContainerAwareCommand
         $progressBar->start();
         foreach ($products as $product) {
             $progressBar->advance();
-            $em->refresh($product);
+
 
             $characteristic = $product->getCharacteristic();
 
