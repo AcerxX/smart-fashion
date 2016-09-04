@@ -264,32 +264,8 @@ class MangoCommand extends ContainerAwareCommand
             'storeId' => 4
         ];
 
-
-        /** @var EntityManager $em */
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        $sql = "SET FOREIGN_KEY_CHECKS=0;";
-        $stmt = $em->getConnection()->prepare($sql);
-        $stmt->execute();
-
-
         // Mark all products as not updated
-        $output->writeln("Mark all mango products as not updated...");
-
-        $productsRepository = $em->getRepository('AppBundle:Products');
-        $products = $productsRepository->findBy(['store' => 4]);
-
-        $progressBar = new ProgressBar($output, count($products));
-        $progressBar->setMessage("Marking all Mango products as not updated");
-
-        $progressBar->start();
-        foreach ($products as $product) {
-            $progressBar->advance();
-            $product->setUpdated(false);
-            $em->persist($product);
-        }
-        $progressBar->finish();
-        $em->flush();
-
+        $this->setUp($output);
 
         // Updating products
         $i = 1;
@@ -316,26 +292,13 @@ class MangoCommand extends ContainerAwareCommand
 
 
         // Cleanup not updated products
-        $output->writeln("Cleaning up not updated products...");
-
         /** @var EntityManager $em */
         $em = $this->getContainer()->get('doctrine')->getManager();
+        $sql = "SET FOREIGN_KEY_CHECKS=0;";
+        $stmt = $em->getConnection()->prepare($sql);
+        $stmt->execute();
 
-        $products = $productsRepository->findBy(['store' => 4, 'updated' => false]);
-
-        $progressBar = new ProgressBar($output, count($products));
-        $progressBar->setMessage("Cleaning up not updated products...");
-
-        $progressBar->start();
-        foreach ($products as $product) {
-            $progressBar->advance();
-
-            $em->merge($product);
-            $em->remove($product);
-        }
-        $em->flush();
-        $progressBar->finish();
-
+        // $this->cleanUp($output);
 
         $sql = "SET FOREIGN_KEY_CHECKS=1;";
         $stmt = $em->getConnection()->prepare($sql);
@@ -398,5 +361,66 @@ class MangoCommand extends ContainerAwareCommand
                 $em->clear();
             }
         }
+    }
+
+    /**
+     * Marks all Mango products as not updated.
+     *
+     * @param OutputInterface $output
+     */
+    public function setUp(OutputInterface $output)
+    {
+        $output->writeln("Mark all mango products as not updated...");
+
+        /** @var EntityManager $em */
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        /** @var ProductsRepository $productsRepository */
+        $productsRepository = $em->getRepository('AppBundle:Products');
+        /** @var Products[] $products */
+        $products = $productsRepository->findBy(['store' => 4]);
+
+        $progressBar = new ProgressBar($output, count($products));
+        $progressBar->setMessage("Marking all Mango products as not updated");
+        $progressBar->start();
+
+        foreach ($products as $product) {
+            $progressBar->advance();
+            $product->setUpdated(false);
+            $em->persist($product);
+        }
+
+        $progressBar->finish();
+        $em->flush();
+    }
+
+    /**
+     * Removes from DB not updated lines.
+     *
+     * @param OutputInterface $output
+     */
+    public function cleanUp(OutputInterface $output)
+    {
+        $output->writeln("Cleaning up not updated products...");
+
+        /** @var EntityManager $em */
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        /** @var ProductsRepository $productsRepository */
+        $productsRepository = $em->getRepository('AppBundle:Products');
+        /** @var Products[] $products */
+        $products = $productsRepository->findBy(['store' => 4, 'updated' => false]);
+
+        $progressBar = new ProgressBar($output, count($products));
+        $progressBar->setMessage("Cleaning up not updated products...");
+        $progressBar->start();
+
+        foreach ($products as $product) {
+            $progressBar->advance();
+
+            $em->merge($product);
+            $em->remove($product);
+        }
+
+        $em->flush();
+        $progressBar->finish();
     }
 }
