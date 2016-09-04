@@ -307,7 +307,7 @@ class MangoCommand extends ContainerAwareCommand
                 $output->writeln("FAILED");
                 $logger->addCritical($e->getMessage());
 
-                $em = $this->getContainer()->get('doctrine')->resetManager();
+                $this->getContainer()->get('doctrine')->resetManager();
             }
 
             $output->writeln("Done.");
@@ -317,7 +317,6 @@ class MangoCommand extends ContainerAwareCommand
 
         // Cleanup not updated products
         $output->writeln("Cleaning up not updated products...");
-        $em = $this->getContainer()->get('doctrine')->resetManager();
 
         $products = $productsRepository->findBy(['store' => 4, 'updated' => false]);
 
