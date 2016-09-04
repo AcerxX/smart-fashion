@@ -330,16 +330,7 @@ class MangoCommand extends ContainerAwareCommand
         foreach ($products as $product) {
             $progressBar->advance();
 
-
-            $characteristic = $product->getCharacteristic();
-
-            if (!is_null($characteristic)) {
-                $em->remove($characteristic);
-            }
-
-            if (!is_null($product)) {
-                $em->remove($product);
-            }
+            $em->remove($product);
         }
         $em->flush();
         $progressBar->finish();
