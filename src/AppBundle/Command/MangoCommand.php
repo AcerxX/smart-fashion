@@ -329,7 +329,10 @@ class MangoCommand extends ContainerAwareCommand
 
             $characteristic = $product->getCharacteristic();
 
-            $em->remove($characteristic);
+            if (!is_null($characteristic)) {
+                $em->remove($characteristic);
+            }
+
             $em->remove($product);
         }
         $em->flush();
