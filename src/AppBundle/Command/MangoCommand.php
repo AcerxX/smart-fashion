@@ -306,6 +306,8 @@ class MangoCommand extends ContainerAwareCommand
             } catch (\Exception $e) {
                 $output->writeln("FAILED");
                 $logger->addCritical($e->getMessage());
+
+                $em = $this->getContainer()->get('doctrine')->resetManager();
             }
 
             $output->writeln("Done.");
