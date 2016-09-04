@@ -318,6 +318,9 @@ class MangoCommand extends ContainerAwareCommand
         // Cleanup not updated products
         $output->writeln("Cleaning up not updated products...");
 
+        /** @var EntityManager $em */
+        $em = $this->getContainer()->get('doctrine')->getManager();
+
         $products = $productsRepository->findBy(['store' => 4, 'updated' => false]);
 
         $progressBar = new ProgressBar($output, count($products));
