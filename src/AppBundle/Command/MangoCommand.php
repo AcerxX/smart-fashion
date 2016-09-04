@@ -294,6 +294,7 @@ class MangoCommand extends ContainerAwareCommand
         // Updating products
         $i = 1;
         foreach ($links as $link) {
+            continue;
             $output->writeln("[" . $link['storeId'] . "] Backing up link " . $i . "/" . count($links) . "...");
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $link['link']);
@@ -326,6 +327,7 @@ class MangoCommand extends ContainerAwareCommand
         $progressBar->start();
         foreach ($products as $product) {
             $progressBar->advance();
+            $em->refresh($product);
 
             $characteristic = $product->getCharacteristic();
 
